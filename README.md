@@ -1,9 +1,9 @@
 # Blood-Glucose
 
 ## Data processing:
-data_process_1.py 
+data_process_1.py   data processing
 
-data_process_2.py
+data_process_2.py   graph construction
 
 ## model:
 PNA.py
