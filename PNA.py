@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2023/5/4 15:50
-# @Author  : ljj
-# @File    : GCN_graphConv_1.py
 import os
 import warnings
 
@@ -77,44 +73,8 @@ class PNA(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index, batch = data.x, data.edge_index, data.batch
-
-        # #1. original version
-        # #x = F.dropout(x, p=0.1, training=self.training)
-        # x = self.pna0(x, edge_index)
-        # x = self.bn_0(x)
-        # x = x.relu()
-        # #x = F.dropout(x, p=0.1, training=self.training)
-        # x = self.pna1(x, edge_index)
-        # x = self.bn_1(x)
-        # x = x.relu()
-        # #x = F.dropout(x, p=0.1, training=self.training)
-        # x = self.pna2(x, edge_index)
-        # x = x.relu()
-        # #x = F.dropout(x, p=0.1, training=self.training)
-        # x = self.pna3(x, edge_index)
-        # x = self.bn_2(x)
-
-        # #2. drop edge version
-        # x = self.pna0(x, edge_index)
-        # x = self.bn_0(x)
-        # x = x.relu()
-        # # if self.training:
-        # #     edge_index = switch(x, edge_index, 6)
-        # x = self.pna1(x, edge_index)
-        # x = self.bn_1(x)
-        # x = x.relu()
-        # if self.training:
-        #     edge_index = switch(x, edge_index, 6)
-        # x = self.pna2(x, edge_index)
-        # x = x.relu()
-        # if self.training:
-        #     edge_index = switch(x, edge_index, 6)
-        # x = self.pna3(x, edge_index)
-        # x = self.bn_2(x)
-
-        # #3. node change
-        # if self.training:
-        #     x = switch_n3(x,edge_index,3)
+        
+        #1. Graph embedding
         x = self.pna0(x, edge_index)
         x = self.bn_0(x)
         x = x.relu()
@@ -130,8 +90,8 @@ class PNA(torch.nn.Module):
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
         z = x
 
-        # 3. 分类器
-        #x = F.dropout(x, p=0.1, training=self.training)
+        # 3. classifier
+        x = F.dropout(x, p=0.1, training=self.training)
         x = self.lin(x)
         x = self.softmax(x)
 
@@ -369,23 +329,22 @@ if __name__ == '__main__':
         print(np.std(a_test))
 
 
-    # #5fold+20times
-    # plt.figure(figsize=(10,4))
-    # plt.rcParams['savefig.dpi'] = 500
-    # plt.subplot(1, 2, 1)
-    # draw(a_train,'r','train')
-    # draw(a_test,'orange','test')
-    # plt.legend(loc='lower right')
-    # plt.title('Accuracy')
-    #
-    # plt.subplot(1, 2, 2)
-    # draw(l_train,'g','train')
-    # draw(l_test,'b','test')
-    # plt.legend()
-    # plt.title('Loss')
-    #
-    # plt.savefig("plots/{}/Figure-conbine2.jpg".format(name))
-    # plt.show()
+    #5fold+20times
+    plt.figure(figsize=(10,4))
+    plt.rcParams['savefig.dpi'] = 500
+    plt.subplot(1, 2, 1)
+    draw(a_train,'r','train')
+    draw(a_test,'orange','test')
+    plt.legend(loc='lower right')
+    plt.title('Accuracy')
+    
+    plt.subplot(1, 2, 2)
+    draw(l_train,'g','train')
+    draw(l_test,'b','test')
+    plt.legend()
+    plt.title('Loss')
+    plt.savefig("plots/{}/Figure-conbine2.jpg".format(name))
+    plt.show()
 
     for i in range(20):
         print("---------------------{}----------------------------".format(i))
@@ -413,114 +372,4 @@ if __name__ == '__main__':
     print(np.std(recision))
     print(np.mean(ecall))
     print(np.std(ecall))
-    #
-    # mkdir("plots/{}/array".format(name))
-    # torch.save(accurate, "plots/{}/array/accuracy.pt".format(name))
-    # torch.save(recision, "plots/{}/array/precision.pt".format(name))
-    # torch.save(ecall, "plots/{}/array/recall.pt".format(name))
 
-    # j = 0
-    # for root in roots:
-    #     accuracy_train = torch.load(root + "/acc_train_list.pt")
-    #     loss_train = torch.load(root + "/loss_train_list.pt")
-    #     accuracy_test = torch.load(root + "/acc_test_list.pt")
-    #     loss_test = torch.load(root + "/loss_test_list.pt")
-    #     accurate.append(accuracy_test[-1])
-    #
-    #     j = j + 1
-    #     plt.figure(j,figsize = (10,8))
-    #     plt.subplot(2, 2, 1)
-    #     plt.plot(accuracy_train)
-    #     plt.title("accuracy_train")
-    #
-    #     plt.subplot(2, 2, 2)
-    #     plt.plot(loss_train)
-    #     # plt.plot(precision_fall_train, color="red")
-    #     plt.title("loss_train")
-    #
-    #     plt.subplot(2, 2, 3)
-    #     plt.plot(accuracy_test)
-    #     plt.title("accuracy_test")
-    #
-    #     plt.subplot(2, 2, 4)
-    #     plt.plot(loss_test)
-    #     plt.title("loss_test")
-    #
-    #     plt.savefig("plots/{}/Figure{}.jpg".format(name,j))
-    # plt.show()
-    # print(sum(accurate)/5)
-
-    # plt.figure(figsize=(10, 5))
-    # plt.subplots_adjust(left=0.05,right=0.95,bottom=0.22)
-    #
-    # #axes = fig.subplots(nrows=1,ncols=2)
-    # plt.rcParams['savefig.dpi'] = 300
-    #
-    # k = 0
-    # for root in roots:
-    #     accuracy_train = torch.load(root + "/acc_train_list.pt")
-    #     loss_train = torch.load(root + "/loss_train_list.pt")
-    #     accuracy_test = torch.load(root + "/acc_test_list.pt")
-    #     loss_test = torch.load(root + "/loss_test_list.pt")
-    #
-    #     k = k + 1
-    #
-    #     plt.subplot(1, 2, 1)
-    #     plt.title("Accuracy", fontsize=15)
-    #     plt.plot(accuracy_train, label='train_fold{}'.format(k),zorder=k, color=plt.cm.OrRd(0.3 + 0.1 * k))
-    #     plt.plot(accuracy_test, label='test_fold{}'.format(k), zorder=5+k,color=plt.cm.GnBu(0.3 + 0.1 * k))
-    #
-    #     plt.subplot(1, 2, 2)
-    #     plt.title("Loss", fontsize=15)
-    #     plt.plot(loss_train, label='train_fold{}'.format(k),zorder = k, color=plt.cm.OrRd(0.3 + 0.1 * k))
-    #     plt.plot(loss_test, label='test_fold{}'.format(k), zorder = 5+k,color=plt.cm.GnBu(0.3 + 0.1 * k))
-    #
-    # plt.legend(fontsize=12, bbox_to_anchor=(1,0),borderaxespad=2.8,ncol=5)  #,bottom=5
-    # plt.savefig("plots/{}/Figure-conbine.jpg".format(name))
-    # plt.show()
-
-    #hahahahah
-    # j = 0
-    # for root in roots:
-    #     accuracy_train = torch.load(root + "/acc_train_list.pt")
-    #     loss_train = torch.load(root + "/loss_train_list.pt")
-    #     accuracy_test = torch.load(root + "/acc_test_list.pt")
-    #     loss_test = torch.load(root + "/loss_test_list.pt")
-    #     accurate.append(accuracy_test[-1])
-    #
-    #     j = j + 1
-    #     plt.figure(j,figsize = (10,8))
-    #     plt.subplot(2, 2, 1)
-    #     plt.plot(accuracy_train)
-    #     plt.title("accuracy_train")
-    #
-    #     plt.subplot(2, 2, 2)
-    #     plt.plot(loss_train)
-    #     # plt.plot(precision_fall_train, color="red")
-    #     plt.title("loss_train")
-    #
-    #     plt.subplot(2, 2, 3)
-    #     plt.plot(accuracy_test)
-    #     plt.title("accuracy_test")
-    #
-    #     plt.subplot(2, 2, 4)
-    #     plt.plot(loss_test)
-    #     plt.title("loss_test")
-    #
-    #     plt.savefig("plots/{}/Figure{}.jpg".format(name,j))
-    #plt.show()
-    #print(sum(accurate)/5)
-    #
-    # plt.figure()
-    # k = 0
-    # for root in roots:
-    #     accuracy_train = torch.load(root + "/acc_train_list.pt")
-    #     loss_train = torch.load(root + "/loss_train_list.pt")
-    #     accuracy_test = torch.load(root + "/acc_test_list.pt")
-    #     loss_test = torch.load(root + "/loss_test_list.pt")
-    #
-    #     plt.plot(accuracy_train, color=plt.cm.OrRd(0.3 + 0.1 * k))
-    #     plt.plot(accuracy_test, color=plt.cm.GnBu(0.3 + 0.1 * k))
-    #
-    #     k = k + 1
-    # plt.savefig("plots/{}/Figure-conbine.jpg".format(name,j))
