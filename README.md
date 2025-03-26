@@ -12,5 +12,3 @@ PNA.py
 algor.py   other graph neural network models
 
 evaluate.py  model evaluation metrics
-
-Hello, GitHub Branch!
