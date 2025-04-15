@@ -1,5 +1,8 @@
 # Blood-Glucose
 
+Towards Noninvasive Glucose Monitoring Based on Bioimpedance Grid Sampling Topology
+Link For the paper: https://ieeexplore.ieee.org/document/10500475
+
 ## Data processing:
 data_process_1.py   data processing
 
