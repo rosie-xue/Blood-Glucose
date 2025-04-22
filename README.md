@@ -1,5 +1,7 @@
 # Blood-Glucose
 
+This is the source code for the following paper:
+
 [Towards Noninvasive Glucose Monitoring Based on Bioimpedance Grid Sampling Topology](https://ieeexplore.ieee.org/document/10500475)
 
 ## Data processing:
